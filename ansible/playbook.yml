@@ -1,0 +1,78 @@
+---
+- name: Configure InfraPro developer VM
+  hosts: developer_vm
+  become: true
+  gather_facts: true
+
+  vars:
+    developer_packages:
+      - git
+      - curl
+      - wget
+      - unzip
+      - jq
+      - maven
+      - openjdk-21-jdk
+
+  tasks:
+    - name: Wait for the EC2 instance to become reachable
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+        sleep: 10
+
+    - name: Update the APT package cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install developer tools
+      ansible.builtin.apt:
+        name: "{{ developer_packages }}"
+        state: present
+
+    - name: Create developer workspace
+      ansible.builtin.file:
+        path: /opt/royal-hotel/developer-workspace
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: "0755"
+
+    - name: Create project information file
+      ansible.builtin.copy:
+        dest: /opt/royal-hotel/developer-workspace/README.txt
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+        content: |
+          Royal Hotel Developer Environment
+          Provisioned by Terraform
+          Configured by Ansible
+          Environment: Development
+
+    - name: Verify Java installation
+      ansible.builtin.command: java --version
+      register: java_version
+      changed_when: false
+
+    - name: Display Java version
+      ansible.builtin.debug:
+        var: java_version.stdout_lines
+
+    - name: Verify Maven installation
+      ansible.builtin.command: mvn --version
+      register: maven_version
+      changed_when: false
+
+    - name: Display Maven version
+      ansible.builtin.debug:
+        var: maven_version.stdout_lines
+
+    - name: Verify Git installation
+      ansible.builtin.command: git --version
+      register: git_version
+      changed_when: false
+
+    - name: Display Git version
+      ansible.builtin.debug:
+        var: git_version.stdout

@@ -1,0 +1,33 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# Terraform variable files
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Generated inventory
+ansible/inventory.ini
+
+# SSH private keys
+*.pem
+*.key
+id_rsa
+id_rsa.*
+infrapro-key
+
+# IDE
+.idea/
+.vscode/
+
+# Operating system
+.DS_Store
+Thumbs.db
